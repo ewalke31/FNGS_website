@@ -1,17 +1,21 @@
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, get_object_or_404
+from django.views import generic
 from analyze.models import Dataset
 
+class IndexView(generic.ListView):
+	template_name = 'explore/index.html'
+	context_object_name = 'datasets'
 
-def index(request):
-	datasets = Dataset.objects.all()
-	context = {
-		'datasets': datasets,
-	}
-	return render(request, 'explore/index.html', context)
+	def get_queryset(self):
+		return Dataset.objects.all()
 
-def dataset(request, dataset_id):
-	dataset = get_object_or_404(Dataset, dataset_id = dataset_id)
 
-	return render(request, 'explore/dataset.html', {'dataset': dataset})
-	
+class DatasetView(generic.DetailView):
+	model = Dataset
+	context_object_name = 'dataset'
+
+	template_name = 'explore/dataset.html'
+
+	def get_object(self):
+		return get_object_or_404(Dataset, dataset_id=self.kwargs.get("dataset_id"))

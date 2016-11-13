@@ -7,4 +7,5 @@ app_name = 'home'
 urlpatterns = [
 	# /explore/
     url(r'^$', views.index, name='index'),
+    # /explore/<dataset_id>/
 ]
