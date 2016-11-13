@@ -11,6 +11,45 @@
                 <p>Dataset: {{ dataset }}</p> 
                 <p>Collection Site: {{ dataset.collection_site }}</p>  
 
+                <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Subject ID</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for subject in dataset.subject_set.all %}
+                            <tr>
+                                <td>{{ subject.sub_id }}</td>
+                                <td>
+                                    <form action="% url ''  %}" method="post" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="button" class="btn btn-success btn-xs">
+                                            <span class="glyphicon glyphicon-play"></span>&nbsp; Analyze
+                                        </button>
+                                    </form>
+                                    </a>
+                                </td>
+                                <td>
+                                    <form action="{% url 'analyze:subject-delete' dataset.dataset_id subject.sub_id %}" method="post" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger btn-xs">
+                                            <span class="glyphicon glyphicon-remove"></span>&nbsp; Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                <form class="form-horizontal" action="{% url 'analyze:subject-add' dataset.dataset_id %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class = "form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="add" class="btn btn-success">Add Subject</button>
+                        </div>
+                    </div>    
+                </form>
                 <form class="form-horizontal" action="{% url 'analyze:dataset-delete' dataset.dataset_id %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class = "form-group">
@@ -19,6 +58,7 @@
                         </div>
                     </div>         
                 </form>
+
             </div>
         </div>
     </div>

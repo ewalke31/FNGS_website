@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views import generic
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.core.urlresolvers import reverse_lazy
-from .models import Dataset
+from .models import Dataset, Subject
 
 
 class IndexView(generic.ListView):
@@ -45,3 +45,20 @@ class DatasetDelete(DeleteView):
 
 	def get_object(self):
 		return get_object_or_404(Dataset, dataset_id=self.kwargs.get("dataset_id"))
+
+
+class SubjectCreate(CreateView):
+	model = Subject
+	fields = ['dataset', 'sub_id', 'struct_scan', 'func_scan']
+	context_object_name = 'subject'
+
+	def get_object(self):
+		return get_object_or_404(Subject, sub_id=self.kwargs.get("sub_id"))
+
+class SubjectDelete(DeleteView):
+	model = Subject
+	context_object_name = 'subject'
+	success_url = reverse_lazy('analyze:index')
+
+	def get_object(self):
+		return get_object_or_404(Subject, sub_id=self.kwargs.get("sub_id"))
