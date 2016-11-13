@@ -1,14 +1,16 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
+from django.shortcuts import render, get_object_or_404
 from .models import Dataset
 
 def index(request):
-	all_datasets = Dataset.objects.all()
-	html = ''
-	for dataset in all_datasets:
-		url = '/explore/' + str(dataset.dataset_id) + '/'
-		html += '<a href="' + url + '"/a>' + dataset.dataset_id + '<br>'
+	datasets = Dataset.objects.all()
+	context = {
+		'datasets': datasets,
+	}
+	return render(request, 'explore/index.html', context)
 
-	return HttpResponse(html)
+def dataset(request, dataset_id):
+	dataset = get_object_or_404(Dataset, dataset_id = dataset_id)
 
-def detail(request, dataset_id):
-	return HttpResponse("<h1>Details for Dataset Id: " + str(dataset_id) + "</h1>")
+	return render(request, 'explore/dataset.html', {'dataset': dataset})
+	

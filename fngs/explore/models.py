@@ -13,7 +13,7 @@ class Subject(models.Model):
 	sub_id = models.CharField(max_length=30)
 
 	def __str__(self):
-		return str(self.dataset + "_" + self.subid)
+		return str(str(self.dataset) + "_" + str(self.sub_id))
 
 class StructScan(models.Model):
 	sub = models.ForeignKey(Subject, on_delete = models.CASCADE)
