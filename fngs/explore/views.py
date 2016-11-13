@@ -1,6 +1,7 @@
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, get_object_or_404
-from .models import Dataset
+from analyze.models import Dataset
+
 
 def index(request):
 	datasets = Dataset.objects.all()
