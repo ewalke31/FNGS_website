@@ -123,4 +123,4 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'subject_data')
-MEDIA_URL = '/scans/'
+MEDIA_URL = os.path.join(BASE_DIR, 'subject_data/')
