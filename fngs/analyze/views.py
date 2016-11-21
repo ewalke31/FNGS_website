@@ -6,6 +6,12 @@ from django.core.urlresolvers import reverse_lazy
 from .models import Dataset, Subject
 from .forms import DatasetForm, SubjectForm
 from ndmg.scripts.fngs_pipeline import fngs_pipeline
+from django.conf import settings
+import time
+from ndmg.utils import utils as mgu
+from threading import Thread
+from multiprocessing import Process
+
 
 BRAIN_FILE_TYPES = ['nii', 'nii.gz']
 
@@ -29,13 +35,19 @@ def create_dataset(request):
 				}
 				return render(request, 'analyze/create_dataset.html', context)
 		dataset = form.save(commit=False)
+		# make a folder for datasets if need be
+		# if not os.path.exists(settings.DATA_FOLDER):
+		# 	os.makedirs(str(settings.DATA_FOLDER))
+		# data_dir = settings.DATA_FOLDER + "/" + dataset.dataset_id
+		# # put a folder for this dataset
+		# if not os.path.exists(data_dir):
+		# 	os.makedirs(data_dir)
 		dataset.save()
 		return render(request, 'analyze/dataset.html', {'dataset': dataset})
 	context = {
 		"form": form,
 	}
 	return render(request, 'analyze/create_dataset.html', context)
-
 
 def create_subject(request, dataset_id):
 	form = SubjectForm(request.POST or None, request.FILES or None)
@@ -73,6 +85,7 @@ def create_subject(request, dataset_id):
 				'error_message': 'Brain File must be .nii or .nii.gz',
 			}
 			return render(request, 'analyze/create_subject.html', context)
+		print subject.func_scan.url
 		subject.save()
 		return render(request, 'analyze/dataset.html', {'dataset': dataset})
 	context = {
@@ -80,16 +93,29 @@ def create_subject(request, dataset_id):
 	}
 	return render(request, 'analyze/create_subject.html', context)
 
+def analysis(subject, output_dir):
+	fngs_pipeline(subject.func_scan.url, subject.struct_scan.url, 
+				  settings.AT_FOLDER + '/atlas/MNI152_T1_2mm.nii.gz', settings.AT_FOLDER + '/atlas/MNI152_T1_2mm_brain.nii.gz',
+				  settings.AT_FOLDER + '/mask/MNI152_T1_2mm_brain_mask.nii.gz', [settings.AT_FOLDER + '/label/desikan_2mm.nii.gz'],
+				  output_dir, stc=None, fmt='graphml')
+	subject.save() # updated the output location, so save the updated subject
+
 
 def analyze_subject(request, dataset_id, sub_id):
 	dataset = get_object_or_404(Dataset, dataset_id=dataset_id)
 	subject = get_object_or_404(Subject, dataset=dataset, sub_id=sub_id)
-	my_home = '/home/eric/demo_atlases/'
-	print(subject.func_scan.url)
-	fngs_pipeline(subject.func_scan.url, subject.struct_scan.url, 
-		my_home + 'atlas/MNI152_T1_2mm.nii.gz', my_home + 'atlas/MNI152_T1_2mm_brain.nii.gz',
-		my_home + 'mask/MNI152_T1_2mm_brain_mask.nii.gz', [my_home + 'label/desikan_2mm.nii.gz'],
-		stc=None, outdir='/home/eric/testruns')
+	try:
+		# update subject save location
+		date = time.strftime("%d-%m-%Y")
+		output_dir = settings.OUTPUT_DIR + dataset_id + "/" + sub_id + "_" + date
+		subject.add_output_url(output_dir)
+		print subject.output_url
+		p = Process(target=analysis, args=(subject,output_dir,))
+		p.daemon=True
+		p.start()
+
+	except:
+			raise Http404
 	return render(request, 'analyze/dataset.html', {'dataset':dataset})
 
 def get_results(request, dataset_id, sub_id):
@@ -97,14 +123,24 @@ def get_results(request, dataset_id, sub_id):
 
 def delete_dataset(request, dataset_id):
 	dataset = get_object_or_404(Dataset, dataset_id=dataset_id)
-	dataset.delete()
-	datasets = Dataset.objects.all()
-	return render(request, 'analyze/index.html', {'datasets': datasets})
+	# get the subjects of this dataset to delete all of them
+	subjects = get_object_or_404(Dataset, dataset_id=dataset_id)
+	if subjects:
+		return HttpResponse("There are subjects in here!", status=404)
+	else:
+		dataset.delete()
+		datasets = Dataset.objects.all()
+		return render(request, 'analyze/index.html', {'datasets': datasets})
 
 
 def delete_subject(request, dataset_id, sub_id):
 	dataset = get_object_or_404(Dataset, dataset_id=dataset_id)
 	subject = get_object_or_404(Subject, dataset=dataset, sub_id=sub_id)
+	# clear all traces of the subject from our storage system
+	mgu().execute_cmd("rm -rf " + subject.func_scan.url)
+	mgu().execute_cmd("rm -rf " + subject.struct_scan.url)
+	if subject.output_url is not None:
+		mgu().execute_cmd("rm -rf " + subject.output_url)
 	subject.delete()
 	datasets = Dataset.objects.all()
 	return render(request, 'analyze/dataset.html', {'dataset': dataset})

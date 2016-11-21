@@ -122,5 +122,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'subject_data')
-MEDIA_URL = os.path.join(BASE_DIR, 'subject_data/')
+# the directory to place all uploaded graphs and outputs
+SERVER_DIR = "/FNGS_server/"
+
+MEDIA_ROOT = os.path.join(SERVER_DIR, 'input_data')
+MEDIA_URL = os.path.join(SERVER_DIR, 'input_data/')
+
+OUTPUT_DIR = os.path.join(SERVER_DIR, 'output_data/')
+DATA_FOLDER = os.path.join(SERVER_DIR, "datasets")
+AT_FOLDER = os.path.join(SERVER_DIR, "atlases")

@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.core.urlresolvers import reverse_lazy
+from django.conf import settings
 
 
 class Dataset(models.Model):
@@ -25,6 +26,7 @@ class Subject(models.Model):
 	sub_id = models.CharField(max_length=30)
 	struct_scan = models.FileField()
 	func_scan = models.FileField()
+	output_url = models.CharField(max_length=200, null=True, blank=True)
 	
 	def __eq__(self, other):
 		if isinstance(other, self.__class__):
@@ -34,6 +36,8 @@ class Subject(models.Model):
 	def __ne__(self, other):
 		return not self.__eq__(other)
 
+	def add_output_url(self, url):
+		output_url = models.TextField(url)
 
 	def __str__(self):
 		return str(str(self.dataset) + "_" + str(self.sub_id))
