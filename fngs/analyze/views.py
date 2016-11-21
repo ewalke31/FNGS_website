@@ -98,7 +98,6 @@ def analysis(subject, output_dir):
 				  settings.AT_FOLDER + '/atlas/MNI152_T1_2mm.nii.gz', settings.AT_FOLDER + '/atlas/MNI152_T1_2mm_brain.nii.gz',
 				  settings.AT_FOLDER + '/mask/MNI152_T1_2mm_brain_mask.nii.gz', [settings.AT_FOLDER + '/label/desikan_2mm.nii.gz'],
 				  output_dir, stc=None, fmt='graphml')
-	subject.save() # updated the output location, so save the updated subject
 
 
 def analyze_subject(request, dataset_id, sub_id):
@@ -108,12 +107,12 @@ def analyze_subject(request, dataset_id, sub_id):
 		# update subject save location
 		date = time.strftime("%d-%m-%Y")
 		output_dir = settings.OUTPUT_DIR + dataset_id + "/" + sub_id + "_" + date
-		subject.add_output_url(output_dir)
+		subject.output_url = output_dir
 		print subject.output_url
 		p = Process(target=analysis, args=(subject,output_dir,))
 		p.daemon=True
 		p.start()
-
+		subject.save() # updated the output location, so save the updated subject
 	except:
 			raise Http404
 	return render(request, 'analyze/dataset.html', {'dataset':dataset})
