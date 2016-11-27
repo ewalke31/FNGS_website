@@ -12,6 +12,7 @@ from ndmg.utils import utils as mgu
 from threading import Thread
 from multiprocessing import Process
 import os
+import re
 
 
 BRAIN_FILE_TYPES = ['nii', 'nii.gz']
@@ -101,7 +102,8 @@ def analysis(dataset, sub_id, output_dir):
 	wd = os.getcwd()
 	# go to where the subject is
 	os.chdir(dataset.output_url)
-	mgu().execute_cmd('zip -r ' + str(re.split('/', subject.output_url)[-1]) + ".zip " + str(subject.output_url))
+	sub_folder = re.split('/', subject.output_url[-1])
+	mgu().execute_cmd('zip -r ' + str(sub_folder) + ".zip " + str(sub_folder))
 	# change directory back
 	os.chdir(wd)
 	# and update the subject
