@@ -8,7 +8,11 @@ from django.conf import settings
 class Dataset(models.Model):
 	dataset_id = models.CharField(max_length=30)
 	collection_site = models.CharField(max_length=40)
+	output_url = models.CharField(max_length=200, null=True, blank=True)
 
+	def add_output_url(self, url):
+		output_url = models.TextField(url)
+			
 	def __str__(self):
 		return str(self.dataset_id)
 

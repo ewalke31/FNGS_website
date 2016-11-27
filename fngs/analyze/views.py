@@ -11,6 +11,7 @@ import time
 from ndmg.utils import utils as mgu
 from threading import Thread
 from multiprocessing import Process
+import os
 
 
 BRAIN_FILE_TYPES = ['nii', 'nii.gz']
@@ -35,13 +36,8 @@ def create_dataset(request):
 				}
 				return render(request, 'analyze/create_dataset.html', context)
 		dataset = form.save(commit=False)
-		# make a folder for datasets if need be
-		# if not os.path.exists(settings.DATA_FOLDER):
-		# 	os.makedirs(str(settings.DATA_FOLDER))
-		# data_dir = settings.DATA_FOLDER + "/" + dataset.dataset_id
-		# # put a folder for this dataset
-		# if not os.path.exists(data_dir):
-		# 	os.makedirs(data_dir)
+		dataset.output_url = str(settings.OUTPUT_DIR + dataset.dataset_id)
+		mgu().execute_cmd("mkdir -p " + str(dataset.output_url))
 		dataset.save()
 		return render(request, 'analyze/dataset.html', {'dataset': dataset})
 	context = {
@@ -93,28 +89,35 @@ def create_subject(request, dataset_id):
 	}
 	return render(request, 'analyze/create_subject.html', context)
 
-def analysis(subject, output_dir):
+def analysis(dataset, sub_id, output_dir):
+	subject = get_object_or_404(Subject, dataset=dataset, sub_id=sub_id)
+	if subject.output_url is not None:
+		mgu().execute_cmd("rm -rf " + subject.output_url)
+	subject.output_url = output_dir
 	fngs_pipeline(subject.func_scan.url, subject.struct_scan.url, 
 				  settings.AT_FOLDER + '/atlas/MNI152_T1_2mm.nii.gz', settings.AT_FOLDER + '/atlas/MNI152_T1_2mm_brain.nii.gz',
 				  settings.AT_FOLDER + '/mask/MNI152_T1_2mm_brain_mask.nii.gz', [settings.AT_FOLDER + '/label/desikan_2mm.nii.gz'],
 				  output_dir, stc=None, fmt='graphml')
-
+	wd = os.getcwd()
+	# go to where the subject is
+	os.chdir(dataset.output_url)
+	mgu().execute_cmd('zip -r ' + str(re.split('/', subject.output_url)[-1]) + ".zip " + str(subject.output_url))
+	# change directory back
+	os.chdir(wd)
+	# and update the subject
+	subject.save() # updated the output location, so save the updated subject
 
 def analyze_subject(request, dataset_id, sub_id):
 	dataset = get_object_or_404(Dataset, dataset_id=dataset_id)
-	subject = get_object_or_404(Subject, dataset=dataset, sub_id=sub_id)
 	try:
 		# update subject save location
 		date = time.strftime("%d-%m-%Y")
 		output_dir = settings.OUTPUT_DIR + dataset_id + "/" + sub_id + "_" + date
-		subject.output_url = output_dir
-		print subject.output_url
-		p = Process(target=analysis, args=(subject,output_dir,))
+		p = Process(target=analysis, args=(dataset, sub_id,output_dir,))
 		p.daemon=True
 		p.start()
-		subject.save() # updated the output location, so save the updated subject
 	except:
-			raise Http404
+		raise Http404
 	return render(request, 'analyze/dataset.html', {'dataset':dataset})
 
 def get_results(request, dataset_id, sub_id):
@@ -123,7 +126,10 @@ def get_results(request, dataset_id, sub_id):
 def delete_dataset(request, dataset_id):
 	dataset = get_object_or_404(Dataset, dataset_id=dataset_id)
 	# get the subjects of this dataset to delete all of them
-	subjects = get_object_or_404(Dataset, dataset_id=dataset_id)
+	try:
+		subjects = Subject.objects.get(dataset=dataset)
+	except Subject.DoesNotExist:
+		subjects=None
 	if subjects:
 		return HttpResponse("There are subjects in here!", status=404)
 	else:
