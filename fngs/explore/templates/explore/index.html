@@ -12,7 +12,7 @@
                 <ul>
                     {% for dataset in datasets %}
                     <li><a href="{% url 'explore:dataset' dataset.dataset_id %}">{{ dataset.dataset_id }}</a></li>
-                    {% endfor %}                    
+                    {% endfor %}
                 </ul>
                 {% else %}
                 <h3>No Datasets Available for Public Viewing.</h3>

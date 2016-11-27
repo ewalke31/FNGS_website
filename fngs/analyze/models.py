@@ -3,6 +3,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.core.urlresolvers import reverse_lazy
 from django.conf import settings
+import os.path as op
 
 
 class Dataset(models.Model):
@@ -31,11 +32,14 @@ class Subject(models.Model):
 	struct_scan = models.FileField()
 	func_scan = models.FileField()
 	output_url = models.CharField(max_length=200, null=True, blank=True)
-	
+
 	def __eq__(self, other):
 		if isinstance(other, self.__class__):
 			return ((self.dataset == other.dataset) and (self.sub_id == other.sub_id))
 		return False
+
+	def get_id(self):
+		return str(op.splitext(op.splitext(op.basename(self.func_scan.name))[0])[0])
 
 	def __ne__(self, other):
 		return not self.__eq__(other)
