@@ -16,6 +16,7 @@ RUN pip install -U --force-reinstall matplotlib==1.5.1
 # clone the website repo and make the location for the downloads
 RUN git clone https://github.com/ebridge2/FNGS_website.git && mkdir /FNGS_server && mkdir /FNGS_server/input_data && mkdir /FNGS_server/output_data
 
+RUN cd /FNGS_website/fngs && python manage.py makemigrations && python manage.py migrate
 
 # Get atlases
 RUN cd /FNGS_server
