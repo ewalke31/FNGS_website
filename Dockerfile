@@ -9,7 +9,7 @@ RUN apt-get install -y zip unzip
 RUN apt-get install -y vim git
 
 RUN git clone -b eric-dev-merge2 https://github.com/neurodata/ndmg.git /ndmg && cd /ndmg && python setup.py install
-RUN git clone https://github.com/ebridge2/FNGS_website /FNGS_website && mkdir /FNGS_server
+RUN git clone https://github.com/ebridge2/FNGS_website /FNGS_website && mkdir /FNGS_server && mkdir /FNGS_server/input_data && mkdir /FNGS_server/output_data
 
 # Get atlases
 RUN mkdir /ndmg_atlases && wget -rnH --cut-dirs=3 --no-parent -P /ndmg_atlases http://openconnecto.me/mrdata/share/atlases/
