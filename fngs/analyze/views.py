@@ -100,7 +100,8 @@ def analysis(dataset, sub_id, output_dir):
 	wd = os.getcwd()
 	# go to where the subject is
 	os.chdir(dataset.output_url)
-	sub_folder = re.split('/', subject.output_url[-1])
+	sub_folder = re.split('/', subject.output_url)[-1]
+
 	mgu().execute_cmd('zip -r ' + str(sub_folder) + ".zip " + str(sub_folder))
 	# change directory back
 	os.chdir(wd)

@@ -41,7 +41,7 @@ def sub_overall_qc(request, dataset_id, sub_id):
 				   'tr': res[3]}
 		return render(request, 'explore/overall.html', context)
 	else:
-		raise Http404
+		raise Http404("Either the subject is currently being analyzed, or you have not analyzed this subject yet.")
 
 def sub_motion_qc(request, dataset_id, sub_id):
 	dataset = get_object_or_404(Dataset, dataset_id=dataset_id)
