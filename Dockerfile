@@ -1,5 +1,5 @@
 FROM bids/base_fsl:5.0.9-3
-MAINTAINER Greg Kiar <gkiar@jhu.edu>
+MAINTAINER Eric Bridgeford <ericwb95@gmail.com>
 RUN apt-get update && apt-get install -y python-dev python-setuptools python-numpy python-scipy zlib1g-dev python-nose fsl
 RUN easy_install pip
 RUN apt-get install -y libpng-dev libfreetype6-dev pkg-config
