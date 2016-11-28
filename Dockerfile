@@ -18,6 +18,10 @@ RUN git clone https://github.com/ebridge2/FNGS_website.git && mkdir /FNGS_server
 
 
 # Get atlases
+RUN cd /FNGS_server
+RUN wget http://openconnecto.me/mrdata/share/demo_data/less_small_atlases.zip
+RUN unzip less_small_atlases.zip
+RUN mv demo_atlases atlases
 RUN mkdir /ndmg_atlases && wget -rnH --cut-dirs=3 --no-parent -P /ndmg_atlases http://openconnecto.me/mrdata/share/atlases/
 #S3
 #RUN mkdir /.aws && printf "[default]\nregion = us-east-1" > /.aws/config
