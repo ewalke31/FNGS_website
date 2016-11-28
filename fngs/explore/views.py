@@ -14,16 +14,6 @@ def dataset(request, dataset_id):
 	dataset = get_object_or_404(Dataset, dataset_id=dataset_id)
 	return render(request, 'explore/dataset.html', {'dataset': dataset})
 
-def view_subject(request, dataset_id, sub_id):
-	dataset = get_object_or_404(Dataset, dataset_id=dataset_id)
-	subject = get_object_or_404(Subject, dataset = dataset, sub_id = sub_id)
-	if subject.output_url is not None:
-		context = {'dataset': dataset, 'subject': subject}
-		return render(request, 'explore/subject.html', context)
-	else:
-		pass
-	return render(request, 'explore/dataset.html', {'dataset': dataset})
-
 def download_subject(request, dataset_id, sub_id):
 	dataset = get_object_or_404(Dataset, dataset_id=dataset_id)
 	subject = get_object_or_404(Subject, dataset = dataset, sub_id = sub_id)
@@ -42,13 +32,16 @@ def download_subject(request, dataset_id, sub_id):
 def sub_overall_qc(request, dataset_id, sub_id):
 	dataset = get_object_or_404(Dataset, dataset_id=dataset_id)
 	subject = get_object_or_404(Subject, dataset = dataset, sub_id = sub_id)
-	scan = nb.load(subject.func_scan.url)
-	res = scan.header.get_zooms()
-	context = {'dataset': dataset,
-			   'subject': subject,
-			   'res': res[0:3],
-			   'tr': res[3]}
-	return render(request, 'explore/overall.html', context)
+	if subject.output_url is not None:
+		scan = nb.load(subject.func_scan.url)
+		res = scan.header.get_zooms()
+		context = {'dataset': dataset,
+				   'subject': subject,
+				   'res': res[0:3],
+				   'tr': res[3]}
+		return render(request, 'explore/overall.html', context)
+	else:
+		raise Http404
 
 def sub_motion_qc(request, dataset_id, sub_id):
 	dataset = get_object_or_404(Dataset, dataset_id=dataset_id)

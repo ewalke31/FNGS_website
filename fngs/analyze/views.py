@@ -92,8 +92,6 @@ def create_subject(request, dataset_id):
 
 def analysis(dataset, sub_id, output_dir):
 	subject = get_object_or_404(Subject, dataset=dataset, sub_id=sub_id)
-	if subject.output_url is not None:
-		mgu().execute_cmd("rm -rf " + subject.output_url)
 	subject.output_url = output_dir
 	fngs_pipeline(subject.func_scan.url, subject.struct_scan.url, 
 				  settings.AT_FOLDER + '/atlas/MNI152_T1_2mm.nii.gz', settings.AT_FOLDER + '/atlas/MNI152_T1_2mm_brain.nii.gz',
@@ -111,8 +109,13 @@ def analysis(dataset, sub_id, output_dir):
 
 def analyze_subject(request, dataset_id, sub_id):
 	dataset = get_object_or_404(Dataset, dataset_id=dataset_id)
+	subject = get_object_or_404(Subject, dataset=dataset, sub_id=sub_id)
 	try:
 		# update subject save location
+		if subject.output_url is not None:
+			mgu().execute_cmd("rm -rf " + subject.output_url)
+		subject.output_url = None
+		subject.save()
 		date = time.strftime("%d-%m-%Y")
 		output_dir = settings.OUTPUT_DIR + dataset_id + "/" + sub_id + "_" + date
 		p = Process(target=analysis, args=(dataset, sub_id,output_dir,))
