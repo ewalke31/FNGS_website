@@ -4,7 +4,7 @@ from django.views import generic
 from analyze.models import Dataset, Subject
 import os
 from ndmg.utils import utils as mgu
-
+import nibabel as nb
 
 def index(request):
 	datasets = Dataset.objects.all()
@@ -39,11 +39,21 @@ def download_subject(request, dataset_id, sub_id):
 			raise Http404
 	return render(request, 'explore/dataset.html', {'dataset': dataset})
 
+def sub_overall_qc(request, dataset_id, sub_id):
+	dataset = get_object_or_404(Dataset, dataset_id=dataset_id)
+	subject = get_object_or_404(Subject, dataset = dataset, sub_id = sub_id)
+	scan = nb.load(subject.func_scan.url)
+	res = scan.header.get_zooms()
+	context = {'dataset': dataset,
+			   'subject': subject,
+			   'res': res[0:3],
+			   'tr': res[3]}
+	return render(request, 'explore/overall.html', context)
+
 def sub_motion_qc(request, dataset_id, sub_id):
 	dataset = get_object_or_404(Dataset, dataset_id=dataset_id)
 	subject = get_object_or_404(Subject, dataset = dataset, sub_id = sub_id)
 	test = mgu().execute_cmd("find " + subject.output_url + " -wholename \"*overall*" + subject.get_id() + "*trans*\"")[0].rstrip('\n')
-	print test
 	context = {'dataset': dataset,
 			   'subject': subject,
 			   'trans': mgu().execute_cmd("find " + subject.output_url + " -wholename \"*overall*" + subject.get_id() + "*trans*\"")[0].rstrip('\n'),
@@ -53,15 +63,43 @@ def sub_motion_qc(request, dataset_id, sub_id):
 			   'mckde':mgu().execute_cmd("find " + subject.output_url + " -wholename \"*mc*" + subject.get_id() + "*kde*\"")[0].rstrip('\n')}
 	return render(request, 'explore/motion.html', context)
 
+def sub_stats_qc(request, dataset_id, sub_id):
+	dataset = get_object_or_404(Dataset, dataset_id=dataset_id)
+	subject = get_object_or_404(Subject, dataset = dataset, sub_id = sub_id)
+	context = {'dataset': dataset,
+			   'subject': subject,
+			   'std': mgu().execute_cmd("find " + subject.output_url + " -wholename \"*overall*" + subject.get_id() + "*std*\"")[0].rstrip('\n'),
+			   'snr': mgu().execute_cmd("find " + subject.output_url + " -wholename \"*overall*" + subject.get_id() + "*snr*\"")[0].rstrip('\n'),
+			   'intens': mgu().execute_cmd("find " + subject.output_url + " -wholename \"*overall*" + subject.get_id() + "*intens*\"")[0].rstrip('\n'),
+			   'voxel_hist': mgu().execute_cmd("find " + subject.output_url + " -wholename \"*overall*" + subject.get_id() + "*hist*\"")[0].rstrip('\n')}
+	return render(request, 'explore/stats.html', context)
 
 def sub_register_qc(request, dataset_id, sub_id):
 	dataset = get_object_or_404(Dataset, dataset_id=dataset_id)
 	subject = get_object_or_404(Subject, dataset = dataset, sub_id = sub_id)
-	context = {'dataset': dataset, 'subject': subject}
+	context = {'dataset': dataset,
+			   'subject': subject,
+			   'mean_anat': mgu().execute_cmd("find " + subject.output_url + " -wholename \"*overall*" + subject.get_id() + "*mean_anat*\"")[0].rstrip('\n'),
+			   'mean_ref': mgu().execute_cmd("find " + subject.output_url + " -wholename \"*overall*" + subject.get_id() + "*mean_ref*\"")[0].rstrip('\n'),
+			   'anat_ref': mgu().execute_cmd("find " + subject.output_url + " -wholename \"*overall*" + subject.get_id() + "*anat_ref*\"")[0].rstrip('\n'),
+			   'reg_jitter': mgu().execute_cmd("find " + subject.output_url + " -wholename \"*reg*" + subject.get_id() + "*jitter*\"")[0].rstrip('\n'),
+			   'reg_kde': mgu().execute_cmd("find " + subject.output_url + " -wholename \"*reg*" + subject.get_id() + "*kde*\"")[0].rstrip('\n')}
 	return render(request, 'explore/register.html', context)
 	
 def sub_timeseries_qc(request, dataset_id, sub_id):
 	dataset = get_object_or_404(Dataset, dataset_id=dataset_id)
 	subject = get_object_or_404(Subject, dataset = dataset, sub_id = sub_id)
-	context = {'dataset': dataset, 'subject': subject}
+	labels = os.listdir(subject.output_url + "/roi_timeseries/")
+	labelled_atlas = {}
+	for label in labels:
+		at2label = mgu().execute_cmd("find " + subject.output_url + " -wholename \"*roi*" + "MNI" + "*" + label + "*overlap*\"")[0].rstrip('\n')
+		timeseries = mgu().execute_cmd("find " + subject.output_url + " -wholename \"*roi*" + subject.get_id() + "*" + label + "*timeseries*\"")[0].rstrip('\n')
+		labelled_atlas[label] = Label_Atlas(at2label, timeseries)
+	context = {'dataset': dataset, 'subject': subject, 'labelled_atlas': labelled_atlas}
 	return render(request, 'explore/timeseries.html', context)
+
+class Label_Atlas:
+	def __init__(self, at2label, timeseries):
+		self.at2label = at2label
+		self.timeseries = timeseries
+		pass

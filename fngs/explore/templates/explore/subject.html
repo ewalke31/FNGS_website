@@ -18,13 +18,19 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
+                        <a href="{% url 'explore:sub-qc-overall' dataset.dataset_id subject.sub_id %}">Subject</a>
+                    </li>                
+                    <li>
                         <a href="{% url 'explore:sub-qc-motion' dataset.dataset_id subject.sub_id %}">Motion Correction</a>
                     </li>
                     <li>
                         <a href="{% url 'explore:sub-qc-register' dataset.dataset_id subject.sub_id %}">Registration</a>
                     </li>
                     <li>
-                        <a href="{% url 'explore:sub-qc-timeseries' dataset.dataset_id subject.sub_id %}">Timeseries Extraction</a>
+                        <a href="{% url 'explore:sub-qc-stats' dataset.dataset_id subject.sub_id %}">Statistics</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'explore:sub-qc-timeseries' dataset.dataset_id subject.sub_id %}">Timeseries</a>
                     </li>
                </ul>
             </div>

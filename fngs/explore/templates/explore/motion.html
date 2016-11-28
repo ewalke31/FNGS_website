@@ -16,7 +16,6 @@
 		    <h2>Comparison Before and After Motion Correction</h2>
 		    <p>We align to the zeroth slice, so what we want to look for with our preprocessing here is to compare the quality of alignment before and after motion correction to the zeroth slice of each slice in the brain. We measure similarity with the mean squared error, where a smaller error indicates that our images have better alignment of higher activation regions, which typically would be associated with high white matter alignment (for all alignment comparisons hereafter, the MSE is taken between images normalized by their maximum values, such that all intensities are normalized between 0 and 1). Below, we provide two ways to compare the alignment quality before and after motion correction; in the jitter plot, we show a single point per axial slice per time point, in the kernel density estimate, we see the distribution of mean squared errors (this distribution is over all of the points of our jitter plot). As we can see, the MSE improves slightly after motion correction, which is about what we might expect.</p>
 		    <img src="{{ mcjitter }}" alt="MC jitter" height="600" width="700">
-		    <br>
 		    <img src="{{ mckde }}" alt="MC KDE" height="600" width="700">
 	    </div>
 	</div>

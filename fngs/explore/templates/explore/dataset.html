@@ -22,7 +22,7 @@
                             <tr>
                                 <td>{{ subject.sub_id }}</td>
                                 <td>
-                                    <form action="{% url 'explore:subject-view' dataset.dataset_id subject.sub_id %}" method="post" style="display: inline;">
+                                    <form action="{% url 'explore:sub-qc-overall' dataset.dataset_id subject.sub_id %}" method="post" style="display: inline;">
                                         {% csrf_token %}
                                         <button type="submit" class="btn btn-success btn-xs">
                                             <span class="glyphicon glyphicon-play"></span>&nbsp; View
