@@ -25,7 +25,7 @@ cd ndmg/scripts
 # confirm that the pipeline runs without error
 ./ndmg_demo-func.sh
 
-cd ~/
+cd ../../../
 git clone git@github.com:ebridge2/FNGS_website.git
 cd FNGS_website/fngs
 python setup.py runserver
