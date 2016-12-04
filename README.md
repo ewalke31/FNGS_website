@@ -19,7 +19,7 @@ cd /ndmg/ndmg/scripts/
 
 ### Pulling Docker Container from Remote
 ```
-docker pull -t ericw95/fngs:0.0.1 .
+docker pull ericw95/fngs:0.0.1
 
 # -v argument allows your container to use data that is only available locally. Ie, in this case, the data in
 # /local/path/to/your/data/ would be visible inside the docker container at /data
@@ -31,6 +31,8 @@ cd /ndmg/ndmg/scripts/
 ```
 
 ### Local Website Setup Tutorial
+
+Note that in order for this to work, you need to have FSL version 0.5.9 configured on your local machine. 
 
 ```
 git clone -b nuisance-fmri git@github.com:neurodata/ndmg.git
