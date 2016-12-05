@@ -2,7 +2,7 @@
 
 ## Tutorial
 
-### Building Docker Container Locally
+### Building Docker Container and Deploy Locally
 ```
 git clone git@github.com:ebridge2/FNGS_website.git
 cd FNGS_website
@@ -13,17 +13,38 @@ docker build -t <your-handle>/fngs .
 docker run -ti -v /local/path/to/your/data/:/data --entrypoint /bin/bash <your-handle>/fngs
 # takes you into the docker container
 cd /ndmg/ndmg/scripts/
-./ndmg_demo-func.sh
 # runs the demo
+./ndmg_demo-func.sh
+
+# put up the server locally
+python manage.py runserver
+```
+
+### Building Docker Container and Deploy on Web
+```
+git clone git@github.com:ebridge2/FNGS_website.git
+cd FNGS_website
+docker build -t <your-handle>/fngs .
+
+# -v argument allows your container to use data that is only available locally. Ie, in this case, the data in
+# /local/path/to/your/data/ would be visible inside the docker container at /data
+docker run -ti -v /local/path/to/your/data/:/data -p portnum:portnum  --entrypoint /bin/bash <your-handle>/fngs
+# takes you into the docker container
+cd /ndmg/ndmg/scripts/
+# runs the demo to make sure things work
+./ndmg_demo-func.sh
+
+# put up the server on web
+python manage.py runserver -p 0.0.0.0:portnum
 ```
 
 ### Pulling Docker Container from Remote
 ```
-docker pull ericw95/fngs:0.0.1
+docker pull ericw95/fngs:0.0.2
 
 # -v argument allows your container to use data that is only available locally. Ie, in this case, the data in
 # /local/path/to/your/data/ would be visible inside the docker container at /data
-docker run -ti -v /local/path/to/your/data/:/data --entrypoint /bin/bash ericw95/fngs:0.0.1
+docker run -ti -v /local/path/to/your/data/:/data --entrypoint /bin/bash ericw95/fngs:0.0.2
 # takes you into the docker container
 cd /ndmg/ndmg/scripts/
 ./ndmg_demo-func.sh
@@ -32,7 +53,7 @@ cd /ndmg/ndmg/scripts/
 
 ### Local Website Setup Tutorial
 
-Note that in order for this to work, you need to have FSL version 0.5.9 configured on your local machine. 
+Note that in order for this to work, you need to have FSL version 0.5.9 configured on your local machine (non-intuitive for non Red Head distributions). This path is not recommended. 
 
 ```
 git clone -b nuisance-fmri git@github.com:neurodata/ndmg.git
@@ -45,6 +66,6 @@ cd ndmg/scripts
 cd ../../../
 git clone git@github.com:ebridge2/FNGS_website.git
 cd FNGS_website/fngs
-python setup.py runserver
+python manage.py runserver
 # follow the link given to take you to the FNGS website. 
 ```
