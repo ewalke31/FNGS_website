@@ -32,6 +32,19 @@ class Subject(models.Model):
 	struct_scan = models.FileField()
 	func_scan = models.FileField()
 	output_url = models.CharField(max_length=200, null=True, blank=True)
+	STC_CHOICES = (
+		(None, 'None'),
+		('up', 'Bottom Up Acquisition (standard)'),
+		('down', 'Top Down Acquisition'),
+		("interleaved", 'Interleaved Acquisition')
+	)
+	slice_timing = models.CharField(max_length=20, choices=STC_CHOICES)
+	AN_CHOICES = (
+		(1, 'T1w'),
+		(2, 'T2w'),
+		(3, 'PD')
+	)
+	an = models.IntegerField(choices=AN_CHOICES, default=1)
 
 	def __eq__(self, other):
 		if isinstance(other, self.__class__):

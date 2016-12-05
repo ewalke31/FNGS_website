@@ -25,7 +25,7 @@ SECRET_KEY = '82w=+1q7#usjksm6mfx_p)q0eyb*g-8q&r&=356jv#dt7h@%ae'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['128.220.11.5:8061', '128.220.11.5']
+ALLOWED_HOSTS = ['128.220.11.5:8061', '128.220.11.5', 'localhost']
 
 
 # Application definition
@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',
     'analyze.apps.AnalyzeConfig',
     'explore.apps.ExploreConfig',
+    'algorithms.apps.AlgorithmsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

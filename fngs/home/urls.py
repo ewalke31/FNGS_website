@@ -6,7 +6,6 @@ app_name = 'home'
 
 urlpatterns = [
 	# /explore/
-    url(r'^$', views.index, name='index'),
-    url(r'^$algorithms/', views.algorithms, name='algorithms')
+    url(r'^$', views.index, name='index')
     # /explore/<dataset_id>/
 ]

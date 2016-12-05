@@ -21,13 +21,16 @@
                         <a href="{% url 'explore:sub-qc-overall' dataset.dataset_id subject.sub_id %}">Subject</a>
                     </li>                
                     <li>
-                        <a href="{% url 'explore:sub-qc-motion' dataset.dataset_id subject.sub_id %}">Motion Correction</a>
+                        <a href="{% url 'explore:sub-qc-motion' dataset.dataset_id subject.sub_id %}">Motion</a>
                     </li>
                     <li>
-                        <a href="{% url 'explore:sub-qc-register' dataset.dataset_id subject.sub_id %}">Registration</a>
+                        <a href="{% url 'explore:sub-qc-register' dataset.dataset_id subject.sub_id %}">Reg</a>
                     </li>
                     <li>
-                        <a href="{% url 'explore:sub-qc-stats' dataset.dataset_id subject.sub_id %}">Statistics</a>
+                        <a href="{% url 'explore:sub-qc-nuisance' dataset.dataset_id subject.sub_id %}">Nuis</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'explore:sub-qc-stats' dataset.dataset_id subject.sub_id %}">Stat</a>
                     </li>
                     <li>
                         <a href="{% url 'explore:sub-qc-timeseries' dataset.dataset_id subject.sub_id %}">Timeseries</a>

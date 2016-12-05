@@ -38,7 +38,8 @@ def sub_overall_qc(request, dataset_id, sub_id):
 		context = {'dataset': dataset,
 				   'subject': subject,
 				   'res': res[0:3],
-				   'tr': res[3]}
+				   'tr': res[3]
+		}
 		return render(request, 'explore/overall.html', context)
 	else:
 		raise Http404("Either the subject is currently being analyzed, or you have not analyzed this subject yet.")
@@ -79,6 +80,18 @@ def sub_register_qc(request, dataset_id, sub_id):
 			   'reg_kde': mgu().execute_cmd("find " + subject.output_url + " -wholename \"*reg*" + subject.get_id() + "*kde*\"")[0].rstrip('\n')}
 	return render(request, 'explore/register.html', context)
 	
+def sub_nuisance_qc(request, dataset_id, sub_id):
+	dataset = get_object_or_404(Dataset, dataset_id=dataset_id)
+	subject = get_object_or_404(Subject, dataset = dataset, sub_id = sub_id)
+	context = {
+			   'dataset':dataset,
+			   'subject':subject,
+			   'var': mgu().execute_cmd("find " + subject.output_url + " -wholename \"*nuis*" + subject.get_id() + "*var*\"")[0].rstrip('\n'),
+			   'er2ma': mgu().execute_cmd("find " + subject.output_url + " -wholename \"*eroded_wm*" + subject.get_id() + "*wm_overlap*\"")[0].rstrip('\n'),
+			   'ma2br': mgu().execute_cmd("find " + subject.output_url + " -wholename \"*eroded_wm*" + subject.get_id() + "*aligned_overlap*\"")[0].rstrip('\n'),
+	}
+	return render(request, 'explore/nuisance.html', context)
+
 def sub_timeseries_qc(request, dataset_id, sub_id):
 	dataset = get_object_or_404(Dataset, dataset_id=dataset_id)
 	subject = get_object_or_404(Subject, dataset = dataset, sub_id = sub_id)
@@ -87,12 +100,14 @@ def sub_timeseries_qc(request, dataset_id, sub_id):
 	for label in labels:
 		at2label = mgu().execute_cmd("find " + subject.output_url + " -wholename \"*roi*" + "MNI" + "*" + label + "*overlap*\"")[0].rstrip('\n')
 		timeseries = mgu().execute_cmd("find " + subject.output_url + " -wholename \"*roi*" + subject.get_id() + "*" + label + "*timeseries*\"")[0].rstrip('\n')
-		labelled_atlas[label] = Label_Atlas(at2label, timeseries)
+		corr = mgu().execute_cmd("find " + subject.output_url + " -wholename \"*roi*" + subject.get_id() + "*" + label + "*cor*\"")[0].rstrip('\n')
+		labelled_atlas[label] = Label_Atlas(at2label, timeseries, corr)
 	context = {'dataset': dataset, 'subject': subject, 'labelled_atlas': labelled_atlas}
 	return render(request, 'explore/timeseries.html', context)
 
 class Label_Atlas:
-	def __init__(self, at2label, timeseries):
+	def __init__(self, at2label, timeseries, corr):
 		self.at2label = at2label
 		self.timeseries = timeseries
+		self.corr = corr
 		pass
