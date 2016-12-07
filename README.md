@@ -34,6 +34,9 @@ docker build -t <your-handle>/fngs .
 # /local/path/to/your/data/ would be visible inside the docker container at /data
 docker run -ti -v /local/path/to/your/data/:/data -p <portnum>:<portnum>  --entrypoint /bin/bash <your-handle>/fngs
 # takes you into the docker container
+# otherwise, you can just skip the -v flag entirely if you plan to use the demo data
+docker run -ti --entrypoint /bin/bash <your-handle>/fngs
+
 cd /ndmg/ndmg/scripts/
 # runs the demo to make sure things work
 ./ndmg_demo-func.sh
