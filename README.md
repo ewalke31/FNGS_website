@@ -92,4 +92,51 @@ Quit the server with CONTROL-C.
 ```
 Following the link given by the service will take you to the home page:
 ![FNGS Homepage](https://cloud.githubusercontent.com/assets/8883547/20985816/12fabc48-bc94-11e6-90d8-d74aa0e1bf70.png)
+Click the link above to take you to the "Analyze" Tab.
 
+Let's run through a quick demonstration of how the web service can be used with a real example. You should see that no datasets are available for viewing. To begin, let's click the add-dataset button. 
+![Add Dataset]((https://cloud.githubusercontent.com/assets/8883547/20985885/5a9c76d6-bc94-11e6-9233-40a213f95f38.png)
+
+I've added some text for the Dataset's ID as well as the collection site name. Once we've added this information, add the dataset.
+![Add new dataset](https://cloud.githubusercontent.com/assets/8883547/20985939/91cdee96-bc94-11e6-964f-5418486149dc.png)
+
+Next, let's upload a subject for analysis:
+![Add subject](https://cloud.githubusercontent.com/assets/8883547/20985966/ae843946-bc94-11e6-9bfa-2e299a859e6b.png)
+
+Before we add any information here, let's return to a new terminal window and download some demo data.
+
+```
+cd /tmp/
+wget http://openconnecto.me/mrdata/share/demo_data/full_demo_func.zip # this might take a few seconds to download
+unzip full_demo_func.zip
+```
+This gives us 2 subjects, and 2 trials per subject, of demo data to play around with. Next, let's go back to the website, and fill out the required information for the subject. I chose subject 0025864, scan 1, for this demo. As you can see, we will need to include the functional scan and the structural scan, which can be found at the path "/tmp/full_func/BNU1/sub-0025864/session-1/func/sub-0025864_session-1_bold.nii.gz" and "/tmp/full_func/BNU1/sub-0025864/session-1/anat/sub-0025864_session-1_T1w.nii.gz" respectively  (assuming you downloaded the .zip file to the /tmp/ directory):
+
+![Choosing Functional Scan](https://cloud.githubusercontent.com/assets/8883547/20987531/0da6906c-bc9b-11e6-83cd-d19fbbba9550.png)
+![Choosing Anatomical Scan](https://cloud.githubusercontent.com/assets/8883547/20987510/f4879f7c-bc9a-11e6-8da4-287261324d01.png)
+
+Note that I also went ahead and selected the Structural scan type (T1w) and the Slice Timing Method (Interleaved). Information about the structural scan type is necessary to ensure that when we segment our anatomical image into different brain tissues for nuisance correction, we know what sorts of intensities to look for (ie, white matter looks different in T1w than T2w). Slice timing acquisition is a measure of the acquisition sequence in which the image is acquired. This is unique to the individual dataset, so see the dataset release information if you are not sure which to choose (or, just leave this blank and select "None" in which slice timing correction will not be performed). 
+
+Finally, once you have the entire form filled out, click to add the subject, and wait a few seconds while the upload commences.
+![Add the subject](https://cloud.githubusercontent.com/assets/8883547/20987564/2d09fe44-bc9b-11e6-9f48-b15358c63fae.png)
+
+Note that the web service does not yet have a queuing system, so the next steps require care when uploading your scans for analysis. Take great care not to click the analyze button twice (before the previous analysis is completed and the results are vieweable and downloadable) or delete while an analysis is taking place. This is because the lack of a queuing system means that jobs are just spawned in process modules (a naive, short term solution), so processes are run disconnected from the python session, and analyzing again will spawn new processes over the existing ones (leading to processes being overallocated, and probably crashing the program), and in the case of deletes, leading to processes spontaneously crashing (and probably also crashing the program). Additionally, there is not yet a feature to update your subjects after you upload the data, so if you upload something mistakenly, just delete it and start over. These features are already on the backlog for second semester, so hopefully it will be a lot smoother in the near future.
+
+Next, click to analyze your data (ONCE). 
+![Analyze Your data](https://cloud.githubusercontent.com/assets/8883547/20987602/4f9297aa-bc9b-11e6-83cc-d72b646275da.png)
+
+Note that it may be tempting to reload this page because it looks like nothing happened. DON'T (I've done it a bunch of times; the fix if you accidentally do this is below to reset the database)! You will notice that the URL at the top will end with "/analyze/". This means that reloading the page will cause analysis to begin a second time, which will cause the two analyses to conflict and could lead to epic-fail as described above. Give the program a little bit of time, and maybe in the meantime, check out the algorithms section to look at the workflow and pseudo code provided.
+
+Note that you can check on the progress of your run by keeping the terminal you used to start the server open on the side. When the run is finished, you will see a screen something like the one below:
+
+### For people who felt the need to reload the analysis page (like me! the sad thing is I've done it a bunch of times)
+
+If you accidentally reload the analysis page or something gets screwed up, I've had the best luck instead of trying to figure out how messed up it is and going from there, just resetting the service entirely. Go to the directory where you have the website installed:
+```
+cd /FNGS_website/fngs # if on the docker container, it will be right here
+python manage.py flush # Removes all data from the database, but does not touch the existing tables
+rm -rf /FNGS_server/input_data # deletes the existing data... goodbye! 
+rm -rf /FNGS_server/output_data
+cd /FNGS_website/fngs
+python manage.py 0.0.0.0:8000 # should be back up and good to go again
+```
