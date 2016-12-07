@@ -16,8 +16,7 @@ cd /ndmg/ndmg/scripts/
 # runs the demo
 ./ndmg_demo-func.sh
 
-# put up the server locally
-python manage.py runserver
+# proceed to tutorial below about setting up the server
 ```
 
 ### Building Docker Container and Deploy on Web
@@ -34,8 +33,7 @@ cd /ndmg/ndmg/scripts/
 # runs the demo to make sure things work
 ./ndmg_demo-func.sh
 
-# put up the server on web
-python manage.py runserver -p 0.0.0.0:portnum
+# proceed to tutorial below about setting up the server
 ```
 
 ### Pulling Docker Container from Remote
@@ -49,9 +47,11 @@ docker run -ti -v /local/path/to/your/data/:/data --entrypoint /bin/bash ericw95
 cd /ndmg/ndmg/scripts/
 ./ndmg_demo-func.sh
 # runs the demo
+
+# proceed to tutorial below about setting up the server
 ```
 
-### Local Website Setup Tutorial
+### Local Setup Tutorial
 
 Note that in order for this to work, you need to have FSL version 0.5.9 configured on your local machine (non-intuitive for non Red Head distributions). This path is not recommended. 
 
@@ -68,4 +68,7 @@ git clone git@github.com:ebridge2/FNGS_website.git
 cd FNGS_website/fngs
 python manage.py runserver
 # follow the link given to take you to the FNGS website. 
+
+
+# proceed to tutorial below about setting up the server
 ```
