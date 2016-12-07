@@ -8,7 +8,7 @@
 ```
 git clone https://github.com/ebridge2/FNGS_website.git
 cd FNGS_website
-docker build -t <your-handle>/fngs .
+docker build --no-cache -t <your-handle>/fngs .
 
 # -v argument allows your container to use data that is only available locally. Ie, in this case, the data in
 # /local/path/to/your/data/ would be visible inside the docker container at /data
@@ -28,7 +28,7 @@ Note that this guide is very similar to the preceeding guide, except now we need
 ```
 git clone https://github.com/ebridge2/FNGS_website.git
 cd FNGS_website
-docker build -t <your-handle>/fngs .
+docker build --no-cache -t <your-handle>/fngs .
 
 # -v argument allows your container to use data that is only available locally. Ie, in this case, the data in
 # /local/path/to/your/data/ would be visible inside the docker container at /data
