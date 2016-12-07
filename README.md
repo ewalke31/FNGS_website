@@ -35,7 +35,7 @@ docker build -t <your-handle>/fngs .
 docker run -ti -v /local/path/to/your/data/:/data -p <portnum>:<portnum>  --entrypoint /bin/bash <your-handle>/fngs
 # takes you into the docker container
 # otherwise, you can just skip the -v flag entirely if you plan to use the demo data
-docker run -ti --entrypoint /bin/bash <your-handle>/fngs
+docker run -ti -p <portnum>:<portnum> --entrypoint /bin/bash <your-handle>/fngs
 
 cd /ndmg/ndmg/scripts/
 # runs the demo to make sure things work
@@ -50,8 +50,14 @@ docker pull ericw95/fngs:0.0.3
 
 # -v argument allows your container to use data that is only available locally. Ie, in this case, the data in
 # /local/path/to/your/data/ would be visible inside the docker container at /data
-docker run -ti -v /local/path/to/your/data/:/data --entrypoint /bin/bash ericw95/fngs:0.0.3
+docker run -ti -v /local/path/to/your/data/:/data -p <portnum>:<portnum> --entrypoint /bin/bash ericw95/fngs:0.0.3
+# otherwise, you can just skip the -v flag entirely if you plan to use the demo data
+docker run -ti -p <portnum>:<portnum> --entrypoint /bin/bash <your-handle>/fngs
+
+
 # takes you into the docker container
+
+
 cd /ndmg/ndmg/scripts/
 ./ndmg_demo-func.sh
 # runs the demo
