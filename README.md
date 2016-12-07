@@ -112,7 +112,7 @@ Following the link given by the service will take you to the home page:
 Click the link above to take you to the "Analyze" Tab.
 
 Let's run through a quick demonstration of how the web service can be used with a real example. You should see that no datasets are available for viewing. To begin, let's click the add-dataset button. 
-![Add Dataset]((https://cloud.githubusercontent.com/assets/8883547/20985885/5a9c76d6-bc94-11e6-9233-40a213f95f38.png)
+![Add Dataset](https://cloud.githubusercontent.com/assets/8883547/20985885/5a9c76d6-bc94-11e6-9233-40a213f95f38.png)
 
 I've added some text for the Dataset's ID as well as the collection site name. Once we've added this information, add the dataset.
 ![Add new dataset](https://cloud.githubusercontent.com/assets/8883547/20985939/91cdee96-bc94-11e6-964f-5418486149dc.png)
