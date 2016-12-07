@@ -40,11 +40,11 @@ python manage.py runserver -p 0.0.0.0:portnum
 
 ### Pulling Docker Container from Remote
 ```
-docker pull ericw95/fngs:0.0.2
+docker pull ericw95/fngs:0.0.3
 
 # -v argument allows your container to use data that is only available locally. Ie, in this case, the data in
 # /local/path/to/your/data/ would be visible inside the docker container at /data
-docker run -ti -v /local/path/to/your/data/:/data --entrypoint /bin/bash ericw95/fngs:0.0.2
+docker run -ti -v /local/path/to/your/data/:/data --entrypoint /bin/bash ericw95/fngs:0.0.3
 # takes you into the docker container
 cd /ndmg/ndmg/scripts/
 ./ndmg_demo-func.sh
