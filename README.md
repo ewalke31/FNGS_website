@@ -6,7 +6,7 @@
 
 ### Building Docker Container for Pipeline use Only
 ```
-git clone git@github.com:ebridge2/FNGS_website.git
+git clone https://github.com/ebridge2/FNGS_website.git
 cd FNGS_website
 docker build -t <your-handle>/fngs .
 
