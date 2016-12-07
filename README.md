@@ -68,6 +68,11 @@ cd ndmg/scripts
 cd ../../../
 git clone git@github.com:ebridge2/FNGS_website.git
 
+mkdir /FNGS_server # the server expects this directory
+cd /FNGS_server
+wget http://openconnecto.me/mrdata/share/demo_data/less_small_atlases.zip
+unzip less_small_atlases.zip # puts atlases we expect to have in the correct spot
+
 # proceed to tutorial below about setting up the server
 ```
 
