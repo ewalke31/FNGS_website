@@ -26,7 +26,7 @@ cd /ndmg/ndmg/scripts/
 
 Note that this guide is very similar to the preceeding guide, except now we need to forward ports when we use the docker container.
 ```
-git clone git@github.com:ebridge2/FNGS_website.git
+git clone https://github.com/ebridge2/FNGS_website.git
 cd FNGS_website
 docker build -t <your-handle>/fngs .
 
@@ -61,7 +61,7 @@ cd /ndmg/ndmg/scripts/
 Note that in order for this to work, you need to have FSL version 0.5.9 configured on your local machine (non-intuitive for non Red Hat distributions). This path is not recommended unless you have experience installing FSL on non-RH Linux distributions. 
 
 ```
-git clone -b nuisance-fmri git@github.com:neurodata/ndmg.git
+git clone https://github.com/neurodata/ndmg.git
 cd ndmg/
 python setup.py install
 cd ndmg/scripts
