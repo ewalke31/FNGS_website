@@ -128,6 +128,13 @@ Next, click to analyze your data (ONCE).
 Note that it may be tempting to reload this page because it looks like nothing happened. DON'T (I've done it a bunch of times; the fix if you accidentally do this is below to reset the database)! You will notice that the URL at the top will end with "/analyze/". This means that reloading the page will cause analysis to begin a second time, which will cause the two analyses to conflict and could lead to epic-fail as described above. Give the program a little bit of time, and maybe in the meantime, check out the algorithms section to look at the workflow and pseudo code provided.
 
 Note that you can check on the progress of your run by keeping the terminal you used to start the server open on the side. When the run is finished, you will see a screen something like the one below:
+![Run Complete](https://cloud.githubusercontent.com/assets/8883547/20987885/56b9bc2e-bc9c-11e6-8c00-0556af08d168.png)
+
+Now, navigate over to the "explore" tab and we can see all of the cool stuff our pipeline made. Click the dataset, and you should see the subject as below. Feel free to download the data, but for now we'll look at the pretty QC page. 
+
+![View Data](https://cloud.githubusercontent.com/assets/8883547/20987934/84544d98-bc9c-11e6-9b81-3fec18f226bc.png)
+
+And voila! This tutorial is now complete. Feedback can be left in the form of git issues, and if you have any recommendations or things that you'd like to see incorporated into the pipeline (anything from specific fMRI processing techniques to helpful web dev frameworks) I'm all ears. Thanks!
 
 ### For people who felt the need to reload the analysis page (like me! the sad thing is I've done it a bunch of times)
 
