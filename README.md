@@ -13,6 +13,9 @@ docker build -t <your-handle>/fngs .
 # -v argument allows your container to use data that is only available locally. Ie, in this case, the data in
 # /local/path/to/your/data/ would be visible inside the docker container at /data
 docker run -ti -v /local/path/to/your/data/:/data --entrypoint /bin/bash <your-handle>/fngs
+# otherwise, you can just skip the -v flag entirely if you plan to use the demo data
+docker run -ti --entrypoint /bin/bash <your-handle>/fngs
+
 # takes you into the docker container
 cd /ndmg/ndmg/scripts/
 # runs the demo
