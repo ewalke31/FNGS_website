@@ -20,10 +20,11 @@ class DatasetForm(forms.ModelForm):
 class SubjectForm(forms.ModelForm):
     class Meta:
         model = Subject
-        fields = ['dataset', 'sub_id', 'func_scan', 'struct_scan','an', 'slice_timing']
+        fields = ['dataset', 'sub_id', 'sess_id', 'func_scan', 'struct_scan','an', 'slice_timing']
         labels={
         	'dataset': _('Dataset'),
         	'sub_id': _('Subject ID'),
+        	'sess_id': _('Session ID'),
         	'func_scan':_('Functional Scan'),
         	'struct_scan':_('Structural Scan'),
         	'an':_('Structural scan type'),
@@ -32,6 +33,7 @@ class SubjectForm(forms.ModelForm):
         help_texts={
         	'dataset': _('The name of the dataset this subject is a part of.'),
         	'sub_id': _('A unique identifier for the subject.'),
+        	'sess_id': _('A session name for the subject.'),
         	'func_scan':_('the fMRI of this subject.'),
         	'struct_scan':_('the structural MRI of this subject.'),
         	'an':_('The Type of structural scan.'),

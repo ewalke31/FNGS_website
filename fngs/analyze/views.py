@@ -119,7 +119,7 @@ def analyze_subject(request, dataset_id, sub_id):
 		subject.save()
 		date = time.strftime("%d-%m-%Y")
 		output_dir = settings.OUTPUT_DIR + dataset_id + "/" + sub_id + "_" + date
-		p = Process(target=analysis, args=(dataset, sub_id,output_dir,))
+		p = Process(target=analysis, args=(dataset, sub_id, output_dir,))
 		p.daemon=True
 		p.start()
 	except:

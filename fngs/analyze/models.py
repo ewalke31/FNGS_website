@@ -4,7 +4,15 @@ from django.db import models
 from django.core.urlresolvers import reverse_lazy
 from django.conf import settings
 import os.path as op
+import os
+import uuid
 
+
+def get_func_file_path(instance, filename):
+	# extension is everything after first period
+    return os.path.join("/".join([str(instance.dataset), str(instance.sub_id), str(instance.sess_id), "func", filename]))
+def get_anat_file_path(instance, filename):
+    return os.path.join("/".join([str(instance.dataset), str(instance.sub_id), str(instance.sess_id), "anat", filename]))
 
 class Dataset(models.Model):
 	dataset_id = models.CharField(max_length=30)
@@ -29,8 +37,9 @@ class Dataset(models.Model):
 class Subject(models.Model):
 	dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE)
 	sub_id = models.CharField(max_length=30)
-	struct_scan = models.FileField()
-	func_scan = models.FileField()
+	sess_id = models.CharField(max_length=30)
+	struct_scan = models.FileField(upload_to=get_anat_file_path, null=True, blank=True)
+	func_scan = models.FileField(upload_to=get_func_file_path, null=True, blank=True)
 	output_url = models.CharField(max_length=200, null=True, blank=True)
 	STC_CHOICES = (
 		(None, 'None'),
