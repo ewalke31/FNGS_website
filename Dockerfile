@@ -16,15 +16,14 @@ RUN pip install -U --force-reinstall matplotlib==1.5.1
 # clone the website repo and make the location for the downloads
 RUN git clone https://github.com/ebridge2/FNGS_website.git && mkdir /FNGS_server && mkdir /FNGS_server/input_data && mkdir /FNGS_server/output_data
 
+# download the website
 RUN cd /FNGS_website/fngs && python manage.py makemigrations analyze && python manage.py migrate
 
 # Get atlases
 RUN cd /FNGS_server && wget http://openconnecto.me/mrdata/share/demo_data/less_small_atlases.zip && unzip less_small_atlases.zip && mv demo_atlases atlases
 RUN mkdir /ndmg_atlases && wget -rnH --cut-dirs=3 --no-parent -P /ndmg_atlases http://openconnecto.me/mrdata/share/atlases/
 
-#S3
-#RUN mkdir /.aws && printf "[default]\nregion = us-east-1" > /.aws/config
-#ADD credentials.csv /credentials.csv
-#RUN printf "[default]\naws_access_key_id = `tail -n 1 /credentials.csv | cut -d',' -f2`\naws_secret_access_key = `tail -n 1 /credentials.csv | cut -d',' -f3`" > /.aws/credentials && mv /.aws/  ${HOME} && rm /credentials.csv
-#COPY version /version
-ENTRYPOINT ["/FNGS_website/startfngs.sh"]
+# copy over the entrypoint script
+COPY ./startfngs.sh /
+# and add it as an entrypoint
+ENTRYPOINT ["/startfngs.sh"]
