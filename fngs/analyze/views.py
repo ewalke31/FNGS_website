@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse_lazy
 from .models import Dataset, Subject
 from .forms import DatasetForm, SubjectForm
 from ndmg.scripts.fngs_pipeline import fngs_pipeline
+from ndmg.scripts.ndmg_pipeline import ndmg_pipeline
 from django.conf import settings
 import time
 from ndmg.utils import utils as mgu
@@ -82,6 +83,11 @@ def create_subject(request, dataset_id):
 				'error_message': 'Brain File must be .nii or .nii.gz',
 			}
 			return render(request, 'analyze/create_subject.html', context)
+                
+                subject.dti_file = request.FILES['dti_file']
+                subject.mprage_file = request.FILES['mprage_file']
+                subject.bvals_file = request.FILES['bvals_file']
+                subject.bvecs_file = request.FILES['bvecs_file']
 		print subject.func_scan.url
 		subject.save()
 		return render(request, 'analyze/dataset.html', {'dataset': dataset})
@@ -97,6 +103,15 @@ def analysis(dataset, sub_id, output_dir):
 			      settings.AT_FOLDER + '/atlas/MNI152_T1_2mm.nii.gz', settings.AT_FOLDER + '/atlas/MNI152_T1_2mm_brain.nii.gz',
 			      settings.AT_FOLDER + '/mask/MNI152_T1_2mm_brain_mask.nii.gz', settings.AT_FOLDER + '/mask/HarvOx_lv_thr25_2mm.nii.gz', 
 			      [settings.AT_FOLDER + '/label/desikan_2mm.nii.gz'], output_dir, stc=subject.slice_timing, fmt='graphml')
+
+        ndmg_pipeline(subject.dti_file.url, subject.bvals_file.url, subject.bvecs_file.url, subject.mprage_file.url, settings.AT_FOLDER + '/atlas/MNI152_T1_2mm.nii.gz', settings.AT_FOLDER + '/mask/MNI152_T1_2mm_brain_mask.nii.gz', [settings.AT_FOLDER + '/label/desikan_2mm.nii.gz'], output_dir + "/ndmg_results")
+
+        #ndmg_run_cmd = "ndmg_pipeline " + str(subject.dti_file.url) + " " + str(subject.bvals_file.url) + " " + str(subject.bvecs_file.url) + " " + str(subject.mprage_file.url) + " " + str(settings.AT_FOLDER + '/atlas/MNI152_T1_2mm.nii.gz') + " " + str(settings.AT_FOLDER + '/mask/MNI152_T1_2mm_brain_mask.nii.gz') + " " + output_dir + "/ndmg_results " + str(settings.AT_FOLDER + '/label/desikan_2mm.nii.gz')
+        #mgu().execute_cmd(ndmg_run_cmd)
+
+        ndmg_bids_cmd = "ndmg_bids " + output_dir + "/ndmg_results/graphs/ " + output_dir + "/ndmg_results/qc group"
+        mgu().execute_cmd(ndmg_bids_cmd)
+        
 	wd = os.getcwd()
 	# go to where the subject is
 	os.chdir(dataset.output_url)
